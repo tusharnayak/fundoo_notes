@@ -1,12 +1,12 @@
 package com.bridgelabz.fundoo.notes.services;
 
 import java.time.LocalDateTime;
-
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.bridgelabz.fundoo.model.User;
 import com.bridgelabz.fundoo.notes.dto.CollaboratorDto;
 import com.bridgelabz.fundoo.notes.dto.NoteDto;
@@ -26,6 +26,11 @@ public class NotesServiceImpl implements NotesService {
 	@Autowired
 	private Jwt jwt;
 
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose: to create a note. we should pass dto and token
+	 *
+	 */
 	@Override
 	public Response createNote(NoteDto notedto, String token) {
 		String email = jwt.getUserToken(token);
@@ -46,6 +51,11 @@ public class NotesServiceImpl implements NotesService {
 		return new Response(400, "invalid credential", false);
 	}
 
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose:to delete the note.
+	 *
+	 */
 	@Override
 	public Response deleteNote(String token, String id) {
 		String email = jwt.getUserToken(token);
@@ -59,6 +69,10 @@ public class NotesServiceImpl implements NotesService {
 		return new Response(400, "invalid note id", false);
 	}
 
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose: to update previous notes.
+	 */
 	@Override
 	public Response updateNote(NoteDto notedto, String token, String id) {
 		String email = jwt.getUserToken(token);
@@ -79,6 +93,11 @@ public class NotesServiceImpl implements NotesService {
 		return new Response(400, "invalid credential", false);
 	}
 
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose: to pin notes and unpin notes.
+	 *
+	 */
 	@Override
 	public Response pin(String token, String id) {
 		String email = jwt.getUserToken(token);
@@ -96,6 +115,11 @@ public class NotesServiceImpl implements NotesService {
 		return new Response(400, "emailId incorrect", false);
 	}
 
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose: to archive notes and unarchive notes.
+	 *
+	 */
 	@Override
 	public Response archive(String token, String id) {
 		String email = jwt.getUserToken(token);
@@ -114,6 +138,11 @@ public class NotesServiceImpl implements NotesService {
 
 	}
 
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose: to trash or restore data.so in one click you can trash and another
+	 *           for restore data.
+	 */
 	@Override
 	public Response trash(String token, String id) {
 		String email = jwt.getUserToken(token);
@@ -132,7 +161,10 @@ public class NotesServiceImpl implements NotesService {
 
 	}
 
-
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose: add any collaborator(mail-id) who can see your note data
+	 */
 	@Override
 	public Response collaborator(CollaboratorDto collabdto, String noteid, String token) {
 		String email = jwt.getUserToken(token);
@@ -146,8 +178,42 @@ public class NotesServiceImpl implements NotesService {
 		}
 		return new Response(400, "invalid email id", false);
 	}
-	
-	
-	
+
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose: sort all the name that we have given
+	 *
+	 */
+	@Override
+	public List<?> sortByName() {
+
+		return noterepository.findAll().stream().sorted(Comparator.comparing(Note::getTitle)).parallel()
+				.collect(Collectors.toList());
+
+	}
+
+	/**
+	 * @author : Tushar ranjan nayak
+	 * @purpose: to sort the time and date in ascending order
+	 * 
+	 */
+	@Override
+	public List<?> ascendingSortByDate() {
+//		return noterepository.findAll().stream().sorted(Comparator.comparing(Note::getTime)).parallel()
+//				.collect(Collectors.toList());
+		return noterepository.findAll().stream().sorted((u1, u2) -> u1.getTime().compareTo(u2.getTime())).parallel()
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * @purpose: getting the time and date in descending order
+	 * @return: returned the value in descending sorted order
+	 */
+	@Override
+	public List<?> descendingSortByDate() {
+		return noterepository.findAll().stream().sorted((u1, u2) -> u2.getTime().compareTo(u1.getTime())).parallel()
+				.collect(Collectors.toList());
+
+	}
 
 }

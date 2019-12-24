@@ -1,6 +1,9 @@
 package com.bridgelabz.fundoo.notes.services;
 
 
+import java.util.List;
+
+
 import com.bridgelabz.fundoo.notes.dto.CollaboratorDto;
 import com.bridgelabz.fundoo.notes.dto.NoteDto;
 import com.bridgelabz.fundoo.response.Response;
@@ -19,5 +22,11 @@ public interface NotesService {
 	public Response trash(String token, String id);
 
 	public Response collaborator(CollaboratorDto collabdto,String noteid,String token);
+	
+	public List<?>sortByName();
+	
+	public List<?>ascendingSortByDate();
+	
+	public List<?>descendingSortByDate();
 	
 }

@@ -8,6 +8,8 @@ public interface NoteRepository extends MongoRepository<Note, String>{
 	
 	public Note findByemail(String email);
 	
+	//public Optional<Note> findById(String id);
+	
 	//public Note findAllById(String id);
 	
 	//public List<Note>findAllById(String id);

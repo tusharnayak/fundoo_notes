@@ -1,6 +1,7 @@
-package com.bridgelabz.fundoo.label.services;
+package com.bridgelabz.fundoo.notes.services;
 
-import com.bridgelabz.fundoo.label.dto.LabelDto;
+
+import com.bridgelabz.fundoo.notes.dto.LabelDto;
 import com.bridgelabz.fundoo.response.Response;
 
 public interface LabelService {

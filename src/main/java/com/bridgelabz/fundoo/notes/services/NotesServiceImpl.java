@@ -1,6 +1,7 @@
 package com.bridgelabz.fundoo.notes.services;
 
 import java.time.LocalDateTime;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,32 +28,27 @@ public class NotesServiceImpl implements NotesService {
 	private Jwt jwt;
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose: to create a note. we should pass dto and token
 	 *
 	 */
 	@Override
 	public Response createNote(NoteDto notedto, String token) {
 		String email = jwt.getUserToken(token);
-		// User user = userRepository.findByemail(token);
-		if (email != null) {
+		User user = userrepository.findByemail(email);
+		if (user != null) {
 			ModelMapper mapper = new ModelMapper();
 			Note note = mapper.map(notedto, Note.class);
-			if (notedto.getEmail().equals(email)) {
 				note.setTitle(notedto.getTitle());
 				note.setDescription(notedto.getDescription());
 				LocalDateTime now = LocalDateTime.now();
 				note.setTime(now);
 				noterepository.save(note);
 				return new Response(200, "note created", true);
-			}
-			return new Response(400, "invalid mail id", false);
 		}
 		return new Response(400, "invalid credential", false);
 	}
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose:to delete the note.
 	 *
 	 */
@@ -60,17 +56,18 @@ public class NotesServiceImpl implements NotesService {
 	public Response deleteNote(String token, String id) {
 		String email = jwt.getUserToken(token);
 		if (email != null) {
-			List<Note> listnote = noterepository.findAll();
-			Note note = listnote.stream().filter(i -> i.getId().equals(id)).findAny().orElse(null);
-			System.out.println("note::" + note);
-			noterepository.delete(note);
-			return new Response(200, "note deleted", true);
+			//List<Note> listnote = noterepository.findAll();
+			//Note note = listnote.stream().filter(i -> i.getId().equals(id)).findAny().orElse(null);
+			//Optional<Note> noteId=noterepository.findById(id);
+			
+			
+			//return new Response(200, "note deleted", true);
 		}
+		
 		return new Response(400, "invalid note id", false);
 	}
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose: to update previous notes.
 	 */
 	@Override
@@ -79,22 +76,20 @@ public class NotesServiceImpl implements NotesService {
 		User user = userrepository.findByemail(email);
 		System.out.println("emailId:::" + email);
 		if (user != null) {
-			if (email.equals(notedto.getEmail())) {
 				List<Note> listnote = noterepository.findAll();
 				Note note = listnote.stream().filter(i -> i.getId().equals(id)).findAny().orElse(null);
 				System.out.println("note data:::" + note);
 				note.setTitle(notedto.getTitle());
 				note.setDescription(notedto.getDescription());
+				LocalDateTime update=LocalDateTime.now();
+				note.setLastUpdated(update);
 				noterepository.save(note);
 				return new Response(200, "note updated", true);
-			}
-			return new Response(400, "invalid mail id", false);
 		}
 		return new Response(400, "invalid credential", false);
 	}
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose: to pin notes and unpin notes.
 	 *
 	 */
@@ -116,7 +111,6 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose: to archive notes and unarchive notes.
 	 *
 	 */
@@ -139,7 +133,6 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose: to trash or restore data.so in one click you can trash and another
 	 *           for restore data.
 	 */
@@ -162,7 +155,6 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose: add any collaborator(mail-id) who can see your note data
 	 */
 	@Override
@@ -180,7 +172,6 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose: sort all the name that we have given
 	 *
 	 */
@@ -193,7 +184,6 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	/**
-	 * @author : Tushar ranjan nayak
 	 * @purpose: to sort the time and date in ascending order
 	 * 
 	 */

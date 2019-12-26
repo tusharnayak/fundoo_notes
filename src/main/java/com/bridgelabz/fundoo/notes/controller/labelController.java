@@ -1,6 +1,8 @@
-package com.bridgelabz.fundoo.label.controller;
+package com.bridgelabz.fundoo.notes.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.bridgelabz.fundoo.label.dto.LabelDto;
-import com.bridgelabz.fundoo.label.services.LabelServiceImpl;
+
+import com.bridgelabz.fundoo.notes.dto.LabelDto;
+import com.bridgelabz.fundoo.notes.services.LabelServiceImpl;
 import com.bridgelabz.fundoo.response.Response;
 
 @RestController

@@ -1,15 +1,18 @@
-package com.bridgelabz.fundoo.label.services;
+package com.bridgelabz.fundoo.notes.services;
 
 import java.time.LocalDateTime;
+
+
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.bridgelabz.fundoo.label.dto.LabelDto;
-import com.bridgelabz.fundoo.label.model.Label;
-import com.bridgelabz.fundoo.label.repository.LabelRepository;
+
 import com.bridgelabz.fundoo.model.User;
+import com.bridgelabz.fundoo.notes.dto.LabelDto;
+import com.bridgelabz.fundoo.notes.model.Label;
 import com.bridgelabz.fundoo.notes.model.Note;
+import com.bridgelabz.fundoo.notes.repository.LabelRepository;
 import com.bridgelabz.fundoo.notes.repository.NoteRepository;
 import com.bridgelabz.fundoo.repository.UserRepository;
 import com.bridgelabz.fundoo.response.Response;

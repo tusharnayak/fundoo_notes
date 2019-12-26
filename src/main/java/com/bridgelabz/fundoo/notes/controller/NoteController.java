@@ -9,21 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+//import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.fundoo.notes.dto.CollaboratorDto;
 import com.bridgelabz.fundoo.notes.dto.NoteDto;
 import com.bridgelabz.fundoo.notes.model.Note;
-import com.bridgelabz.fundoo.notes.services.NotesServiceImpl;
+import com.bridgelabz.fundoo.notes.services.NotesService;
 import com.bridgelabz.fundoo.response.Response;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/note")
 public class NoteController {
 
 	@Autowired
-	private NotesServiceImpl noteserviceimpl;
+	private NotesService noteserviceimpl;
 
 	/**
 	 * @param notedto
@@ -52,7 +53,7 @@ public class NoteController {
 	 * @return: response entity of update notes
 	 */
 	@PostMapping("/updateNote")
-	public ResponseEntity<Response> updateNote(@RequestBody NoteDto notedto, @RequestParam String token, String id) {
+	public ResponseEntity<Response> updateNote(@RequestBody NoteDto notedto, @RequestParam String token, @RequestParam String id) {
 		return new ResponseEntity<Response>(noteserviceimpl.updateNote(notedto, token, id), HttpStatus.OK);
 	}
 

@@ -1,6 +1,7 @@
 package com.bridgelabz.fundoo.controller;
 
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +15,14 @@ import com.bridgelabz.fundoo.dto.LoginDto;
 import com.bridgelabz.fundoo.dto.RegistrationDto;
 import com.bridgelabz.fundoo.dto.ResetPasswordDto;
 import com.bridgelabz.fundoo.response.Response;
-import com.bridgelabz.fundoo.services.UserServiceImpl;
+import com.bridgelabz.fundoo.services.UserService;
 
 @RestController
 @RequestMapping("/api")
 public class UserLoginController {
 
 	@Autowired
-	UserServiceImpl serviceimpl;
+	private UserService serviceimpl;
 
 	@PostMapping("/adduser")
 	public ResponseEntity<Response> addUser(@Valid @RequestBody RegistrationDto registrationdto) {
@@ -47,7 +48,6 @@ public class UserLoginController {
 	
 	
 	@PostMapping("/resetPassword")
-	
 	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetpassword,String token){
 		return new ResponseEntity<Response>(serviceimpl.resetPassword(resetpassword,token), HttpStatus.OK);
 	}

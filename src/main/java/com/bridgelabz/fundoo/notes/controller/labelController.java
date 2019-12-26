@@ -41,5 +41,4 @@ public class labelController {
 	public ResponseEntity<Response>labelNoteAdd(@RequestBody @RequestParam String noteid,@RequestParam String labelid,@RequestParam String token){
 		return new ResponseEntity<Response>(labelserviceimpl.labelNoteAdd(noteid, labelid, token),HttpStatus.OK);
 	}
-
 }

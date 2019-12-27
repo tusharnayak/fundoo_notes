@@ -31,7 +31,7 @@ public class NoteController {
 	 * @param token
 	 * @return: the value of notedto and token
 	 */
-	@PostMapping("/createNote")
+	@PostMapping("/createnote")
 	public ResponseEntity<Response> createNote(@RequestBody NoteDto notedto, @RequestParam String token) {
 		return new ResponseEntity<Response>(noteserviceimpl.createNote(notedto, token), HttpStatus.OK);
 	}
@@ -41,7 +41,7 @@ public class NoteController {
 	 * @param id
 	 * @return: return the response entity of token and id
 	 */
-	@PostMapping("/deleteNote")
+	@PostMapping("/deletenote")
 	public ResponseEntity<Response> deleteNote(@RequestBody @RequestParam String token, @RequestParam String id) {
 		return new ResponseEntity<Response>(noteserviceimpl.deleteNote(token, id), HttpStatus.OK);
 	}
@@ -52,7 +52,7 @@ public class NoteController {
 	 * @param id
 	 * @return: response entity of update notes
 	 */
-	@PostMapping("/updateNote")
+	@PostMapping("/updatenote")
 	public ResponseEntity<Response> updateNote(@RequestBody NoteDto notedto, @RequestParam String token, @RequestParam String id) {
 		return new ResponseEntity<Response>(noteserviceimpl.updateNote(notedto, token, id), HttpStatus.OK);
 	}
@@ -62,7 +62,7 @@ public class NoteController {
 	 * @param id
 	 * @return: response entity of pin and unpin
 	 */
-	@PostMapping("/pinAndUnpin")
+	@PostMapping("/pin and unpin")
 	public ResponseEntity<Response> pin(@RequestBody @RequestParam String token, @RequestParam String id) {
 		return new ResponseEntity<Response>(noteserviceimpl.pin(token, id), HttpStatus.OK);
 
@@ -73,7 +73,7 @@ public class NoteController {
 	 * @param id
 	 * @return: response entity of archive and restore
 	 */
-	@PostMapping("/archieveUnArchieve")
+	@PostMapping("/archieve-unArchieve")
 	public ResponseEntity<Response> archieve(@RequestBody @RequestParam String token, @RequestParam String id) {
 		return new ResponseEntity<Response>(noteserviceimpl.archive(token, id), HttpStatus.OK);
 	}
@@ -83,7 +83,7 @@ public class NoteController {
 	 * @param id
 	 * @return: response entity of trash and untrash
 	 */
-	@PostMapping("/trashUntrash")
+	@PostMapping("/trash-untrash")
 	public ResponseEntity<Response> trash(@RequestBody @RequestParam String token, @RequestParam String id) {
 		return new ResponseEntity<Response>(noteserviceimpl.trash(token, id), HttpStatus.OK);
 	}
@@ -94,26 +94,35 @@ public class NoteController {
 	 * @param token
 	 * @return: response entity of collaborator
 	 */
-	@PostMapping("/addCollaborator")
+	@PostMapping("/addcollaborator")
 	public ResponseEntity<Response> collaborator(@RequestBody CollaboratorDto collabdto, @RequestParam String noteid,
 			@RequestParam String token) {
 		return new ResponseEntity<Response>(noteserviceimpl.collaborator(collabdto, noteid, token), HttpStatus.OK);
 	}
 
+	/**@purpose: to sort the note by its title
+	 * @return: its return list of note according to title
+	 */
 	@SuppressWarnings("unchecked")
 	@GetMapping("/sortByTitle")
 	public List<Note> sortByTitle() {
 		return (List<Note>) noteserviceimpl.sortByName();
 	}
 
+	/**@purpose: to sort the note by its date and time in ascending order
+	 * @return: its returning the ascending sorting order date and time
+	 */
 	@SuppressWarnings("unchecked")
-	@GetMapping("/ascendingSort")
+	@GetMapping("/ascending-datetimeSort")
 	public List<Note> sortByAscending() {
 		return (List<Note>) noteserviceimpl.ascendingSortByDate();
 	}
 
+	/**@purpose: to sort the note by its date and time in descending order
+	 * @return: its returning the sorting order date and time
+	 */
 	@SuppressWarnings("unchecked")
-	@GetMapping("/descendingSort")
+	@GetMapping("/descending-dateTimeSort")
 	public List<Note> sortByDescending() {
 		return (List<Note>) noteserviceimpl.descendingSortByDate();
 	}

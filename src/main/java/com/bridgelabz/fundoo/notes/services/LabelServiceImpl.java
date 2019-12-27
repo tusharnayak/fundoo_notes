@@ -1,13 +1,9 @@
 package com.bridgelabz.fundoo.notes.services;
 
 import java.time.LocalDateTime;
-
-
-import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.bridgelabz.fundoo.model.User;
 import com.bridgelabz.fundoo.notes.dto.LabelDto;
 import com.bridgelabz.fundoo.notes.model.Label;
@@ -50,8 +46,7 @@ public class LabelServiceImpl implements LabelService {
 		String email = jwt.getUserToken(token);
 		User user = userrepository.findByemail(email);
 		if (user != null) {
-			List<Label> labellist = labelrepository.findAll();
-			Label label = labellist.stream().filter(i -> i.getLabelId().equals(labelid)).findAny().orElse(null);
+			Label label = labelrepository.findById(labelid).get();
 			labelrepository.delete(label);
 			return new Response(200, "label deleted", true);
 		}
@@ -63,8 +58,7 @@ public class LabelServiceImpl implements LabelService {
 		String email = jwt.getUserToken(token);
 		User user = userrepository.findByemail(email);
 		if (user != null) {
-			List<Label> listlabel = labelrepository.findAll();
-			Label label = listlabel.stream().filter(i -> i.getLabelId().equals(labelid)).findAny().orElse(null);
+			Label label = labelrepository.findById(labelid).get();
 			label.setLableTitle(labeldto.getLableTitle());
 			LocalDateTime localdatetime = LocalDateTime.now();
 			label.setLocaldatetime(localdatetime);
@@ -79,21 +73,10 @@ public class LabelServiceImpl implements LabelService {
 		String email = jwt.getUserToken(token);
 		User user = userrepository.findByemail(email);
 		if (user != null) {
-			List<Label> listlabel = labelrepository.findAll();
-			Label label = listlabel.stream().filter(i -> i.getLabelId().equals(labelid)).findAny().orElse(null);
-
-			List<Note> listnote = noterepository.findAll();
-			Note note = listnote.stream().filter(i -> i.getId().equals(noteid)).findAny().orElse(null);
-
-			// note.set
-			// note.getLabellist().add(label);
-			// LocalDateTime dateTime=LocalDateTime.now();
-
-			// label.getListnote().add(note);
-
+			Label label = labelrepository.findById(labelid).get();
+			Note note = noterepository.findById(noteid).get();
 			note.getLabellist().add(label);
 			label.getListnote().add(note);
-
 			labelrepository.save(label);
 			noterepository.save(note);
 
@@ -101,5 +84,4 @@ public class LabelServiceImpl implements LabelService {
 		}
 		return new Response(400, "incorrect mail id", false);
 	}
-
 }

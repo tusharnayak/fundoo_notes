@@ -18,6 +18,7 @@ public class Label {
 	private String email;
 	private String lableTitle;
 	private LocalDateTime localdatetime;
+	private LocalDateTime lastUpdateDate;
 
 	@DBRef
 	List<Note>listnote=new ArrayList<>();

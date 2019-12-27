@@ -1,8 +1,6 @@
 package com.bridgelabz.fundoo.notes.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,34 +8,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.bridgelabz.fundoo.notes.dto.LabelDto;
-import com.bridgelabz.fundoo.notes.services.LabelServiceImpl;
+import com.bridgelabz.fundoo.notes.services.LabelService;
 import com.bridgelabz.fundoo.response.Response;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/label")
 public class labelController {
 
 	@Autowired
-	private LabelServiceImpl labelserviceimpl;
+	private LabelService labelserviceimpl;
 
-	@PostMapping("/createLabel")
+	@PostMapping("/createlabel")
 	public ResponseEntity<Response> createLabel(@RequestBody LabelDto labeldto, @RequestParam String token) {
 		return new ResponseEntity<Response>(labelserviceimpl.createLabel(labeldto, token), HttpStatus.OK);
 	}
 
-	@PostMapping("/deleteLabel")
+	@PostMapping("/deletelabel")
 	public ResponseEntity<Response> deleteLabel(@RequestBody @RequestParam String token, @RequestParam String labelid) {
 		return new ResponseEntity<Response>(labelserviceimpl.deleteLabel(token, labelid), HttpStatus.OK);
 	}
 
-	@PostMapping("/updateLabel")
+	@PostMapping("/updatelabel")
 	public ResponseEntity<Response> updateLabel(@RequestBody LabelDto labeldto, @RequestParam String token,@RequestParam String labelid) {
 		return new ResponseEntity<Response>(labelserviceimpl.updateLabel(labeldto, token, labelid), HttpStatus.OK);
 	}
 	
-	@PostMapping("/labelNoteAdd")
+	@PostMapping("/labelnotesadd")
 	public ResponseEntity<Response>labelNoteAdd(@RequestBody @RequestParam String noteid,@RequestParam String labelid,@RequestParam String token){
 		return new ResponseEntity<Response>(labelserviceimpl.labelNoteAdd(noteid, labelid, token),HttpStatus.OK);
 	}

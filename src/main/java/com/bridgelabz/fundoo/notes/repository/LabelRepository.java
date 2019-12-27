@@ -7,5 +7,4 @@ import com.bridgelabz.fundoo.notes.model.Label;
 @Repository
 public interface LabelRepository extends MongoRepository<Label, String>{
 	public Label findByEmail(String email);
-
 }

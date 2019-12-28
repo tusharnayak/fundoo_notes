@@ -3,6 +3,9 @@ package com.bridgelabz.fundoo.notes.services;
 import java.time.LocalDateTime;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.bridgelabz.fundoo.model.User;
 import com.bridgelabz.fundoo.notes.dto.LabelDto;
@@ -15,6 +18,7 @@ import com.bridgelabz.fundoo.response.Response;
 import com.bridgelabz.fundoo.utility.Jwt;
 
 @Service
+@PropertySource("classpath:message.properties")
 public class LabelServiceImpl implements LabelService {
 	@Autowired
 	private LabelRepository labelrepository;
@@ -24,6 +28,8 @@ public class LabelServiceImpl implements LabelService {
 	private NoteRepository noterepository;
 	@Autowired
 	private Jwt jwt;
+	@Autowired
+	private Environment environment;
 
 	@Override
 	public Response createLabel(LabelDto labeldto, String token) {
@@ -36,9 +42,9 @@ public class LabelServiceImpl implements LabelService {
 			LocalDateTime datetime = LocalDateTime.now();
 			label.setLocaldatetime(datetime);
 			labelrepository.save(label);
-			return new Response(200, "label created", true);
+			return new Response(200,environment.getProperty("LABEL_CREATED") , HttpStatus.OK);
 		}
-		return new Response(400, "incorrect mailId", false);
+		return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
 	}
 
 	@Override
@@ -48,9 +54,9 @@ public class LabelServiceImpl implements LabelService {
 		if (user != null) {
 			Label label = labelrepository.findById(labelid).get();
 			labelrepository.delete(label);
-			return new Response(200, "label deleted", true);
+			return new Response(200,environment.getProperty("LABEL_DELETED") , HttpStatus.BAD_REQUEST);
 		}
-		return new Response(400, "incorrect email", false);
+		return new Response(400, environment.getProperty("INVALID_MAIL_ID"),HttpStatus.BAD_REQUEST);
 	}
 
 	@Override
@@ -63,9 +69,9 @@ public class LabelServiceImpl implements LabelService {
 			LocalDateTime localdatetime = LocalDateTime.now();
 			label.setLocaldatetime(localdatetime);
 			labelrepository.save(label);
-			return new Response(200, "label updated", true);
+			return new Response(200,environment.getProperty("LABEL_UPDATED") ,HttpStatus.OK);
 		}
-		return new Response(400, "incorrect mail id", false);
+		return new Response(400, environment.getProperty("INVALID_MAIL_ID"),HttpStatus.BAD_REQUEST);
 	}
 
 	@Override
@@ -80,8 +86,8 @@ public class LabelServiceImpl implements LabelService {
 			labelrepository.save(label);
 			noterepository.save(note);
 
-			return new Response(200, "note and label added", true);
+			return new Response(200, environment.getProperty("NOTE_AND_LABEL_ADDED"), HttpStatus.OK);
 		}
-		return new Response(400, "incorrect mail id", false);
+		return new Response(400, environment.getProperty("INVALID_MAIL_ID"),HttpStatus.BAD_REQUEST);
 	}
 }

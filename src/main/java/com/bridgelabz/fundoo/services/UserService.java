@@ -1,6 +1,11 @@
 package com.bridgelabz.fundoo.services;
 
 
+import java.io.IOException;
+
+import org.springframework.web.multipart.MultipartFile;
+
+
 import com.bridgelabz.fundoo.dto.ForgetPasswordDto;
 import com.bridgelabz.fundoo.dto.LoginDto;
 import com.bridgelabz.fundoo.dto.RegistrationDto;
@@ -17,6 +22,8 @@ public interface UserService {
 	public Response forgetPassword(ForgetPasswordDto forgetpassword );
 	
 	public Response resetPassword(ResetPasswordDto resetPassword,String token);
+	
+	public Response profilePic(String token, MultipartFile file) throws IOException;
 	
 	//public List<User> getUser(int id);
 }

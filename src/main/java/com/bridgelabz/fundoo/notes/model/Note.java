@@ -28,7 +28,6 @@ public class Note {
 	private LocalDateTime lastUpdated;
 	@Pattern(regexp = "[a-zA-Z0-9][a-zA-Z0-9-.]*@[a-zA-Z]+([.][a-zA-z]*)*")
 	private String email;
-	//private String collaboratorEmailid;
 	private boolean pin;
 	private boolean archive;
 	private boolean trash;

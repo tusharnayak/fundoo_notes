@@ -1,9 +1,18 @@
 package com.bridgelabz.fundoo.services;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.bridgelabz.fundoo.dto.ForgetPasswordDto;
 import com.bridgelabz.fundoo.dto.LoginDto;
 import com.bridgelabz.fundoo.dto.RegistrationDto;
@@ -15,6 +24,8 @@ import com.bridgelabz.fundoo.utility.Jms;
 import com.bridgelabz.fundoo.utility.Jwt;
 
 @Service
+@PropertySource("classpath:message.properties")
+
 public class UserServiceImpl implements UserService {
 
 	@Autowired
@@ -29,11 +40,14 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private BCryptPasswordEncoder bcryptpasswordencoder;
 
-/**
- *@purpose: to add user to the registration page
- */
-@Override
-public Response addUser(RegistrationDto registrationdto) {
+	@Autowired
+	private Environment environment;
+
+	/**
+	 * @purpose: to add user to the registration page
+	 */
+	@Override
+	public Response addUser(RegistrationDto registrationdto) {
 		ModelMapper mapper = new ModelMapper();
 		User user = mapper.map(registrationdto, User.class);
 		String token = jwt.createToken("tusharnayak1996@gmail.com");
@@ -50,7 +64,7 @@ public Response addUser(RegistrationDto registrationdto) {
 	}
 
 	/**
-	 *@purpose: for login to the user.
+	 * @purpose: for login to the user.
 	 */
 	@Override
 	public Response loginUser(LoginDto logindto, String token) {
@@ -78,10 +92,10 @@ public Response addUser(RegistrationDto registrationdto) {
 		System.out.println(email);
 		String token = jwt.createToken(forgetpassword.getEmail());
 		System.out.println(token);
-			if (email != null) {
-				System.out.println("in email");
-				jms.sendMail(forgetpassword.getEmail(), token);
-				return new Response(200, "token sent to your mail ", true);
+		if (email != null) {
+			System.out.println("in email");
+			jms.sendMail(forgetpassword.getEmail(), token);
+			return new Response(200, "token sent to your mail ", true);
 		}
 		return new Response(400, "incorrect mail id", false);
 
@@ -105,5 +119,27 @@ public Response addUser(RegistrationDto registrationdto) {
 		}
 		return new Response(400, "password is not matched", false);
 
+	}
+
+	@Override
+	public Response profilePic(String token, MultipartFile file) throws IOException {
+		String email = jwt.getUserToken(token);
+		User user = repository.findByemail(email);
+		if (user != null) {
+			if (file.getOriginalFilename().contains(".jpg") || file.getOriginalFilename().contains(".jpeg")
+					|| file.getOriginalFilename().contains(".png")) {
+				File convertFile = new File("/home/admin1/Desktop" + file.getOriginalFilename());
+				convertFile.createNewFile();
+				FileOutputStream fileOpStrm = new FileOutputStream(convertFile);
+				String pic = "/home/admin1/Desktop" + file.getOriginalFilename();
+				user.setProfilePic(pic);
+				repository.save(user);
+				fileOpStrm.write(file.getBytes());
+				fileOpStrm.close();
+				return new Response(200, environment.getProperty("PIC_UPLOAD"), HttpStatus.OK);
+			}
+			return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
+		}
+		return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
 	}
 }

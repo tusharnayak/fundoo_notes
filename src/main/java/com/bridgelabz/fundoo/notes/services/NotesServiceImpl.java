@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.bridgelabz.fundoo.model.User;
 import com.bridgelabz.fundoo.notes.dto.CollaboratorDto;
@@ -17,6 +20,7 @@ import com.bridgelabz.fundoo.response.Response;
 import com.bridgelabz.fundoo.utility.Jwt;
 
 @Service
+@PropertySource("classpath:message.properties")
 public class NotesServiceImpl implements NotesService {
 	@Autowired
 	private NoteRepository noterepository;
@@ -25,9 +29,12 @@ public class NotesServiceImpl implements NotesService {
 	@Autowired
 	private Jwt jwt;
 
+	@Autowired
+	private Environment environment;
+
 	/**
 	 * @purpose: to create a note. we should pass dto and token
-	 *
+	 * @return: returning the status which has taken from the environmental file
 	 */
 	@Override
 	public Response createNote(NoteDto notedto, String token) {
@@ -41,14 +48,15 @@ public class NotesServiceImpl implements NotesService {
 			LocalDateTime now = LocalDateTime.now();
 			note.setTime(now);
 			noterepository.save(note);
-			return new Response(200, "note created", true);
-			
+			return new Response(200, environment.getProperty("NOTE_CREATION"), HttpStatus.OK);
+
 		}
-		return new Response(400, "invalid credential", false);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
-	 * @purpose:to delete the note.
+	 * @purpose: to delete the note.
+	 * @return: returning the status which has taken from the environmental file
 	 *
 	 */
 	@Override
@@ -57,13 +65,14 @@ public class NotesServiceImpl implements NotesService {
 		if (email != null) {
 			Note noteId = noterepository.findById(id).get();
 			noterepository.delete(noteId);
-			return new Response(200, "note deleted", true);
+			return new Response(200, environment.getProperty("NOTE_DELETED"), HttpStatus.OK);
 		}
-		return new Response(400, "invalid note id", false);
+		return new Response(400, environment.getProperty("NOTE_DELETED_FAILED"), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
 	 * @purpose: to update previous notes.
+	 * @return: returning the status which has taken from the environmental file
 	 */
 	@Override
 	public Response updateNote(NoteDto notedto, String token, String id) {
@@ -78,14 +87,14 @@ public class NotesServiceImpl implements NotesService {
 			LocalDateTime update = LocalDateTime.now();
 			note.setLastUpdated(update);
 			noterepository.save(note);
-			return new Response(200, "note updated", true);
+			return new Response(200, environment.getProperty("NOTE_UPDATED"), HttpStatus.OK);
 		}
-		return new Response(400, "invalid credential", false);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
 	 * @purpose: to pin notes and unpin notes.
-	 *
+	 * @return: returning the status which has taken from the environmental file
 	 */
 	@Override
 	public Response pin(String token, String id) {
@@ -96,16 +105,16 @@ public class NotesServiceImpl implements NotesService {
 			if (note.getId() != null) {
 				note.setPin(!note.isPin());
 				noterepository.save(note);
-				return new Response(200, "pinUnpin updated", true);
+				return new Response(200, environment.getProperty("VALUE"), note.isPin());
 			}
-			return new Response(400, "check your id", false);
+			return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 		}
-		return new Response(400, "emailId incorrect", false);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
 	 * @purpose: to archive notes and unarchive notes.
-	 *
+	 * @return: returning the status which has taken from the environmental file
 	 */
 	@Override
 	public Response archive(String token, String id) {
@@ -116,17 +125,18 @@ public class NotesServiceImpl implements NotesService {
 			if (note.getId() != null) {
 				note.setArchive(!note.isArchive());
 				noterepository.save(note);
-				return new Response(200, "archieveUnArchieve updated", true);
+				return new Response(200, environment.getProperty("VALUE"), note.isArchive());
 			}
-			return new Response(400, "check your id", false);
+			return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 		}
-		return new Response(400, "emailId incorrect", false);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 
 	}
 
 	/**
 	 * @purpose: to trash or restore data.so in one click you can trash and another
 	 *           for restore data.
+	 * @return: returning the status which has taken from the environmental file
 	 */
 	@Override
 	public Response trash(String token, String id) {
@@ -137,16 +147,17 @@ public class NotesServiceImpl implements NotesService {
 			if (note.getId() != null) {
 				note.setTrash(!note.isTrash());
 				noterepository.save(note);
-				return new Response(200, "trashUnthrashed updated", true);
+				return new Response(200, environment.getProperty("VALUE"), note.isTrash());
 			}
-			return new Response(400, "check your id", false);
+			return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 		}
-		return new Response(400, "emailId incorrect", false);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 
 	}
 
 	/**
 	 * @purpose: add any collaborator(mail-id) who can see your note data
+	 * @return: returning the status which has taken from the environmental file
 	 */
 	@Override
 	public Response collaborator(CollaboratorDto collabdto, String id, String token) {
@@ -155,16 +166,17 @@ public class NotesServiceImpl implements NotesService {
 		if (user != null) {
 			Note note = noterepository.findById(id).get();
 			note.getCollabEmailId().add(collabdto);
-			//note.setCollaboratorEmailid(collabdto.getCollaboratorEmailid());
 			noterepository.save(note);
-			return new Response(200, "collaborator added", true);
+			return new Response(200, environment.getProperty("COLLABORATOR"), HttpStatus.OK);
 		}
-		return new Response(400, "invalid email id", false);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
 	 * @purpose: sort all the name that we have given
-	 *
+	 * @return: returning what ever it got from the noterepository ,first of all
+	 *          filter it, then sort it by title name order using parallel sorting
+	 *          features
 	 */
 	@Override
 	public List<?> sortByName() {
@@ -174,19 +186,21 @@ public class NotesServiceImpl implements NotesService {
 
 	/**
 	 * @purpose: to sort the time and date in ascending order
-	 * 
+	 * @return: returning what ever it got from the noterepository ,first of all
+	 *          filter it, then sort it by ascending date order using parallel
+	 *          sorting features
 	 */
 	@Override
 	public List<?> ascendingSortByDate() {
-//		return noterepository.findAll().stream().sorted(Comparator.comparing(Note::getTime)).parallel()
-//				.collect(Collectors.toList());
 		return noterepository.findAll().stream().sorted((u1, u2) -> u1.getTime().compareTo(u2.getTime())).parallel()
 				.collect(Collectors.toList());
 	}
 
 	/**
 	 * @purpose: getting the time and date in descending order
-	 * @return: returned the value in descending sorted order
+	 * @return: returning what ever it got from the noterepository ,first of all
+	 *          filter it, then sort it by descending date order using parallel
+	 *          sorting features
 	 */
 	@Override
 	public List<?> descendingSortByDate() {

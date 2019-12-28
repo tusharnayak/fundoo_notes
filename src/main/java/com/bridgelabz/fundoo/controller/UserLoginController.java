@@ -1,7 +1,7 @@
 package com.bridgelabz.fundoo.controller;
 
+import java.io.IOException;
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.bridgelabz.fundoo.dto.ForgetPasswordDto;
 import com.bridgelabz.fundoo.dto.LoginDto;
 import com.bridgelabz.fundoo.dto.RegistrationDto;
@@ -51,8 +52,9 @@ public class UserLoginController {
 	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetpassword,String token){
 		return new ResponseEntity<Response>(serviceimpl.resetPassword(resetpassword,token), HttpStatus.OK);
 	}
+	
+	@PostMapping("/upload_profilepic")
+	public ResponseEntity<Response>uploadProfilePic( @RequestParam String token,@RequestParam("file") MultipartFile file) throws IOException{
+		return new ResponseEntity<Response>(serviceimpl.profilePic(token, file),HttpStatus.OK);
+	}
 }
-
-
-
-

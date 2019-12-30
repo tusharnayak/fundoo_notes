@@ -57,4 +57,24 @@ public class UserLoginController {
 	public ResponseEntity<Response>uploadProfilePic( @RequestParam String token,@RequestParam("file") MultipartFile file) throws IOException{
 		return new ResponseEntity<Response>(serviceimpl.profilePic(token, file),HttpStatus.OK);
 	}
+	@PostMapping("/delete_profilepic")
+	public ResponseEntity<Response>deleteProfilePic(@RequestParam String token){
+		return new ResponseEntity<Response>(serviceimpl.deletePic(token),HttpStatus.OK);
+	}
+	@PostMapping("/edit_profilepic")
+	public ResponseEntity<Response>editProfilePic(@RequestParam String token,@RequestParam("file")MultipartFile file) throws IOException{
+		return new ResponseEntity<Response>(serviceimpl.editPic(token, file),HttpStatus.OK);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

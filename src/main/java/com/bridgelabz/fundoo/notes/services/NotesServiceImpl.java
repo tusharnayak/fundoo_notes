@@ -1,7 +1,7 @@
 package com.bridgelabz.fundoo.notes.services;
 
 import java.time.LocalDateTime;
-
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
@@ -206,6 +206,36 @@ public class NotesServiceImpl implements NotesService {
 	public List<?> descendingSortByDate() {
 		return noterepository.findAll().stream().sorted((u1, u2) -> u2.getTime().compareTo(u1.getTime())).parallel()
 				.collect(Collectors.toList());
+
+	}
+
+	@Override
+	public Response addReminder(String noteId, String token, int month, int year, int date, int hour, int minute,
+			int second) {
+		String email = jwt.getUserToken(token);
+		User user = userrepository.findByemail(email);
+		if (user != null) {
+			Note note = noterepository.findAllById(noteId);
+			ZoneId indiaZoneId = ZoneId.of("Asia/Kolkata");
+			LocalDateTime ldt = LocalDateTime.now(indiaZoneId);
+			System.out.println("date::::" + ldt);
+			LocalDateTime specificDateTime = ldt.withMonth(month).withYear(year).withDayOfMonth(date).withHour(hour)
+					.withMinute(minute).withSecond(second);
+			note.setAddReminder(specificDateTime);
+			noterepository.save(note);
+			return new Response(200, environment.getProperty("REMINDER_ADDED"), HttpStatus.OK);
+		}
+		return new Response(400, environment.getProperty("REMINDER_REMOVED"), HttpStatus.BAD_REQUEST);
+	}
+
+	@Override
+	public Response deleteReminder(String noteId) {
+		Note note = noterepository.findById(noteId).get();
+		if (note.getAddReminder() != null) {
+			note.setAddReminder(null);
+			return new Response(200, environment.getProperty("REMINDER_REMOVED"), HttpStatus.OK);
+		}
+		return new Response(400, environment.getProperty("REMINDER_NOT_AVAILABLE"), HttpStatus.BAD_REQUEST);
 
 	}
 

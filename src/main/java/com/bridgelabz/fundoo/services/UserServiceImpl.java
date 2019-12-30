@@ -118,7 +118,6 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		return new Response(400, "password is not matched", false);
-
 	}
 
 	@Override
@@ -138,8 +137,48 @@ public class UserServiceImpl implements UserService {
 				fileOpStrm.close();
 				return new Response(200, environment.getProperty("PIC_UPLOAD"), HttpStatus.OK);
 			}
-			return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
+			return new Response(400, environment.getProperty("INCORRECT_EXTENSION"), HttpStatus.BAD_REQUEST);
 		}
 		return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
 	}
+
+	@Override
+	public Response deletePic(String token) {
+		String email = jwt.getUserToken(token);
+		User user = repository.findByemail(email);
+		if (user != null) {
+			user.setProfilePic(null);
+			repository.save(user);
+			return new Response(200, environment.getProperty("PIC_DELETED"), HttpStatus.OK);
+		}
+		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
+	}
+
+	@Override
+	public Response editPic(String token, MultipartFile file) throws IOException {
+		String email = jwt.getUserToken(token);
+		User user = repository.findByemail(email);
+		if (user != null) {
+			String previousProfilePic = user.getProfilePic();
+			if (previousProfilePic != null) {
+				user.setProfilePic(null);
+				if (file.getOriginalFilename().contains(".jpg") || file.getOriginalFilename().contains(".jpeg")
+						|| file.getOriginalFilename().contains(".png")) {
+					File convertFile = new File("/home/admin1/Desktop" + file.getOriginalFilename());
+					convertFile.createNewFile();
+					FileOutputStream fileOutputStream = new FileOutputStream(convertFile);
+					String pic = "/home/admin1/Desktop" + file.getOriginalFilename();
+					user.setProfilePic(pic);
+					repository.save(user);
+					fileOutputStream.write(file.getBytes());
+					fileOutputStream.close();
+					return new Response(200, environment.getProperty("EDIT_PROFILE_PIC"), HttpStatus.OK);
+				}
+				return new Response(400, environment.getProperty("INCORRECT_EXTENSION"), HttpStatus.BAD_REQUEST);
+			}
+			return new Response(400, environment.getProperty("PROFILE_PIC_NOT_EXISTS"), HttpStatus.BAD_REQUEST);
+		}
+		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
+	}
+
 }

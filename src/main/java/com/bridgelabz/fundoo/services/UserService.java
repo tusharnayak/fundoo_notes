@@ -25,5 +25,7 @@ public interface UserService {
 	
 	public Response profilePic(String token, MultipartFile file) throws IOException;
 	
-	//public List<User> getUser(int id);
+	public Response deletePic(String token);
+	
+	public Response editPic(String token,MultipartFile file) throws IOException;
 }

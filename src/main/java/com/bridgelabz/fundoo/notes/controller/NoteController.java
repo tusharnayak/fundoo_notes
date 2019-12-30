@@ -50,7 +50,8 @@ public class NoteController {
 	 * @return: response entity of update notes
 	 */
 	@PostMapping("/updatenote")
-	public ResponseEntity<Response> updateNote(@RequestBody NoteDto notedto, @RequestParam String token, @RequestParam String id) {
+	public ResponseEntity<Response> updateNote(@RequestBody NoteDto notedto, @RequestParam String token,
+			@RequestParam String id) {
 		return new ResponseEntity<Response>(noteserviceimpl.updateNote(notedto, token, id), HttpStatus.OK);
 	}
 
@@ -97,7 +98,8 @@ public class NoteController {
 		return new ResponseEntity<Response>(noteserviceimpl.collaborator(collabdto, noteid, token), HttpStatus.OK);
 	}
 
-	/**@purpose: to sort the note by its title
+	/**
+	 * @purpose: to sort the note by its title
 	 * @return: its return list of note according to title
 	 */
 	@SuppressWarnings("unchecked")
@@ -106,7 +108,8 @@ public class NoteController {
 		return (List<Note>) noteserviceimpl.sortByName();
 	}
 
-	/**@purpose: to sort the note by its date and time in ascending order
+	/**
+	 * @purpose: to sort the note by its date and time in ascending order
 	 * @return: its returning the ascending sorting order date and time
 	 */
 	@SuppressWarnings("unchecked")
@@ -115,13 +118,33 @@ public class NoteController {
 		return (List<Note>) noteserviceimpl.ascendingSortByDate();
 	}
 
-	/**@purpose: to sort the note by its date and time in descending order
+	/**
+	 * @purpose: to sort the note by its date and time in descending order
 	 * @return: its returning the sorting order date and time
 	 */
 	@SuppressWarnings("unchecked")
 	@GetMapping("/descending-dateTimeSort")
 	public List<Note> sortByDescending() {
 		return (List<Note>) noteserviceimpl.descendingSortByDate();
+	}
+
+	/**
+	 * @param token
+	 * @param id
+	 * @param date
+	 * @param time
+	 * @return
+	 */
+	@PostMapping("/add_reminder")
+	public ResponseEntity<Response> addReminder(@RequestParam String token, @RequestParam String id,
+			@RequestParam int month, @RequestParam int year, @RequestParam int date, @RequestParam int hour,
+			@RequestParam int minute, @RequestParam int second) {
+		return new ResponseEntity<Response>(
+				noteserviceimpl.addReminder(id, token, month, year, date, hour, minute, second), HttpStatus.OK);
+	}
+	@PostMapping("/delete_reminder")
+	public ResponseEntity<Response>deleteReminder(@RequestBody @RequestParam String noteId){
+		return new ResponseEntity<Response>(noteserviceimpl.deleteReminder(noteId),HttpStatus.OK);
 	}
 
 }

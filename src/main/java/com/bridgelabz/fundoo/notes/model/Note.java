@@ -1,8 +1,6 @@
 package com.bridgelabz.fundoo.notes.model;
 
 import java.time.LocalDateTime;
-
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
@@ -31,6 +29,7 @@ public class Note {
 	private boolean pin;
 	private boolean archive;
 	private boolean trash;
+	private LocalDateTime addReminder;
 	private List<CollaboratorDto>collabEmailId=new ArrayList<>();
 
 	@JsonIgnore

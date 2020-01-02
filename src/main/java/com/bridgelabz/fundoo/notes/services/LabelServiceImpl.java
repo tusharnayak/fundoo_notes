@@ -21,11 +21,11 @@ import com.bridgelabz.fundoo.utility.Jwt;
 @PropertySource("classpath:message.properties")
 public class LabelServiceImpl implements LabelService {
 	@Autowired
-	private LabelRepository labelrepository;
+	private LabelRepository labelRepository;
 	@Autowired
-	private UserRepository userrepository;
+	private UserRepository userRepository;
 	@Autowired
-	private NoteRepository noterepository;
+	private NoteRepository noteRepository;
 	@Autowired
 	private Jwt jwt;
 	@Autowired
@@ -34,60 +34,63 @@ public class LabelServiceImpl implements LabelService {
 	@Override
 	public Response createLabel(LabelDto labeldto, String token) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
-		if (user != null) {
+		User user = userRepository.findByemail(email);
+		if (user == null) {
+			return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
+		} else {
 			ModelMapper mapper = new ModelMapper();
 			Label label = mapper.map(labeldto, Label.class);
 			label.setLableTitle(labeldto.getLableTitle());
 			LocalDateTime datetime = LocalDateTime.now();
 			label.setLocaldatetime(datetime);
-			labelrepository.save(label);
-			return new Response(200,environment.getProperty("LABEL_CREATED") , HttpStatus.OK);
+			labelRepository.save(label);
+			return new Response(200, environment.getProperty("LABEL_CREATED"), HttpStatus.OK);
 		}
-		return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
 	}
 
 	@Override
 	public Response deleteLabel(String token, String labelid) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
-		if (user != null) {
-			Label label = labelrepository.findById(labelid).get();
-			labelrepository.delete(label);
-			return new Response(200,environment.getProperty("LABEL_DELETED") , HttpStatus.BAD_REQUEST);
+		User user = userRepository.findByemail(email);
+		if (user == null) {
+			return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
+		} else {
+			Label label = labelRepository.findById(labelid).get();
+			labelRepository.delete(label);
+			return new Response(200, environment.getProperty("LABEL_DELETED"), HttpStatus.BAD_REQUEST);
 		}
-		return new Response(400, environment.getProperty("INVALID_MAIL_ID"),HttpStatus.BAD_REQUEST);
 	}
 
 	@Override
 	public Response updateLabel(LabelDto labeldto, String token, String labelid) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
-		if (user != null) {
-			Label label = labelrepository.findById(labelid).get();
+		User user = userRepository.findByemail(email);
+		if (user == null) {
+			return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
+		} else {
+			Label label = labelRepository.findById(labelid).get();
 			label.setLableTitle(labeldto.getLableTitle());
-			LocalDateTime localdatetime = LocalDateTime.now();
-			label.setLocaldatetime(localdatetime);
-			labelrepository.save(label);
-			return new Response(200,environment.getProperty("LABEL_UPDATED") ,HttpStatus.OK);
+			LocalDateTime lastUpdated = LocalDateTime.now();
+			label.setLastUpdateDate(lastUpdated);
+			labelRepository.save(label);
+			return new Response(200, environment.getProperty("LABEL_UPDATED"), HttpStatus.OK);
 		}
-		return new Response(400, environment.getProperty("INVALID_MAIL_ID"),HttpStatus.BAD_REQUEST);
 	}
 
 	@Override
 	public Response labelNoteAdd(String noteid, String labelid, String token) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
-		if (user != null) {
-			Label label = labelrepository.findById(labelid).get();
-			Note note = noterepository.findById(noteid).get();
+		User user = userRepository.findByemail(email);
+		if (user == null) {
+			return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
+		} else {
+			Label label = labelRepository.findById(labelid).get();
+			Note note = noteRepository.findById(noteid).get();
 			note.getLabellist().add(label);
 			label.getListnote().add(note);
-			labelrepository.save(label);
-			noterepository.save(note);
-
+			labelRepository.save(label);
+			noteRepository.save(note);
 			return new Response(200, environment.getProperty("NOTE_AND_LABEL_ADDED"), HttpStatus.OK);
 		}
-		return new Response(400, environment.getProperty("INVALID_MAIL_ID"),HttpStatus.BAD_REQUEST);
 	}
 }

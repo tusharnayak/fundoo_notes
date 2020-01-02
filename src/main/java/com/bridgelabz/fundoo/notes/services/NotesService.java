@@ -23,8 +23,11 @@ public interface NotesService {
 
 	public Response addReminder(String noteId, String token, int month, int year, int date, int hour, int minute,
 			int second);
-	
+
 	public Response deleteReminder(String noteId);
+
+	public Response editReminder(String noteId, String token, int month, int year, int date, int hour, int minute,
+			int second);
 
 	public List<?> sortByName();
 

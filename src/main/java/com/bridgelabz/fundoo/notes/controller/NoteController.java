@@ -1,6 +1,9 @@
 package com.bridgelabz.fundoo.notes.controller;
 
 import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +32,7 @@ public class NoteController {
 	 * @return: the value of note dto and token
 	 */
 	@PostMapping("/createnote")
-	public ResponseEntity<Response> createNote(@RequestBody NoteDto notedto, @RequestParam String token) {
+	public ResponseEntity<Response> createNote(@Valid @RequestBody NoteDto notedto, @RequestParam String token) {
 		return new ResponseEntity<Response>(noteserviceimpl.createNote(notedto, token), HttpStatus.OK);
 	}
 
@@ -50,7 +53,7 @@ public class NoteController {
 	 * @return: response entity of update notes
 	 */
 	@PostMapping("/updatenote")
-	public ResponseEntity<Response> updateNote(@RequestBody NoteDto notedto, @RequestParam String token,
+	public ResponseEntity<Response> updateNote(@Valid @RequestBody NoteDto notedto, @RequestParam String token,
 			@RequestParam String id) {
 		return new ResponseEntity<Response>(noteserviceimpl.updateNote(notedto, token, id), HttpStatus.OK);
 	}
@@ -93,8 +96,8 @@ public class NoteController {
 	 * @return: response entity of collaborator
 	 */
 	@PostMapping("/addcollaborator")
-	public ResponseEntity<Response> collaborator(@RequestBody CollaboratorDto collabdto, @RequestParam String noteid,
-			@RequestParam String token) {
+	public ResponseEntity<Response> collaborator(@Valid @RequestBody CollaboratorDto collabdto,
+			@RequestParam String noteid, @RequestParam String token) {
 		return new ResponseEntity<Response>(noteserviceimpl.collaborator(collabdto, noteid, token), HttpStatus.OK);
 	}
 
@@ -103,7 +106,7 @@ public class NoteController {
 	 * @return: its return list of note according to title
 	 */
 	@SuppressWarnings("unchecked")
-	@GetMapping("/sortByTitle")
+	@GetMapping("/sortbytitle")
 	public List<Note> sortByTitle() {
 		return (List<Note>) noteserviceimpl.sortByName();
 	}
@@ -113,7 +116,7 @@ public class NoteController {
 	 * @return: its returning the ascending sorting order date and time
 	 */
 	@SuppressWarnings("unchecked")
-	@GetMapping("/ascending-datetimeSort")
+	@GetMapping("/ascending_datetimesort")
 	public List<Note> sortByAscending() {
 		return (List<Note>) noteserviceimpl.ascendingSortByDate();
 	}
@@ -123,7 +126,7 @@ public class NoteController {
 	 * @return: its returning the sorting order date and time
 	 */
 	@SuppressWarnings("unchecked")
-	@GetMapping("/descending-dateTimeSort")
+	@GetMapping("/descending_dateTimeSort")
 	public List<Note> sortByDescending() {
 		return (List<Note>) noteserviceimpl.descendingSortByDate();
 	}
@@ -131,9 +134,13 @@ public class NoteController {
 	/**
 	 * @param token
 	 * @param id
+	 * @param month
+	 * @param year
 	 * @param date
-	 * @param time
-	 * @return
+	 * @param hour
+	 * @param minute
+	 * @param second
+	 * @return: response entity of id,token,month,year,date,hour,minute,second
 	 */
 	@PostMapping("/add_reminder")
 	public ResponseEntity<Response> addReminder(@RequestParam String token, @RequestParam String id,
@@ -142,9 +149,33 @@ public class NoteController {
 		return new ResponseEntity<Response>(
 				noteserviceimpl.addReminder(id, token, month, year, date, hour, minute, second), HttpStatus.OK);
 	}
+
+	/**
+	 * @param noteId
+	 * @return: response entity of note id
+	 */
 	@PostMapping("/delete_reminder")
-	public ResponseEntity<Response>deleteReminder(@RequestBody @RequestParam String noteId){
-		return new ResponseEntity<Response>(noteserviceimpl.deleteReminder(noteId),HttpStatus.OK);
+	public ResponseEntity<Response> deleteReminder(@RequestBody @RequestParam String noteId) {
+		return new ResponseEntity<Response>(noteserviceimpl.deleteReminder(noteId), HttpStatus.OK);
 	}
 
+	/**
+	 * @param token
+	 * @param id
+	 * @param month
+	 * @param year
+	 * @param date
+	 * @param hour
+	 * @param minute
+	 * @param second
+	 * @return: response entity of id,token,month,year,date,hour,minute,second
+	 * 
+	 */
+	@PostMapping("/edit_reminder")
+	public ResponseEntity<Response> editReminder(@RequestParam String token, @RequestParam String id,
+			@RequestParam int month, @RequestParam int year, @RequestParam int date, @RequestParam int hour,
+			@RequestParam int minute, @RequestParam int second) {
+		return new ResponseEntity<Response>(
+				noteserviceimpl.editReminder(id, token, month, year, date, hour, minute, second), HttpStatus.OK);
+	}
 }

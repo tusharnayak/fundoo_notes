@@ -24,8 +24,10 @@ public class Note {
 	private String title;
 	private LocalDateTime time;
 	private LocalDateTime lastUpdated;
+	@NotBlank
 	@Pattern(regexp = "[a-zA-Z0-9][a-zA-Z0-9-.]*@[a-zA-Z]+([.][a-zA-z]*)*")
 	private String email;
+	@NotBlank
 	private boolean pin;
 	private boolean archive;
 	private boolean trash;

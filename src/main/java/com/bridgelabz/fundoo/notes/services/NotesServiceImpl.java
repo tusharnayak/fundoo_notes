@@ -23,9 +23,9 @@ import com.bridgelabz.fundoo.utility.Jwt;
 @PropertySource("classpath:message.properties")
 public class NotesServiceImpl implements NotesService {
 	@Autowired
-	private NoteRepository noterepository;
+	private NoteRepository noteRepository;
 	@Autowired
-	private UserRepository userrepository;
+	private UserRepository userRepository;
 	@Autowired
 	private Jwt jwt;
 
@@ -37,17 +37,17 @@ public class NotesServiceImpl implements NotesService {
 	 * @return: returning the status which has taken from the environmental file
 	 */
 	@Override
-	public Response createNote(NoteDto notedto, String token) {
+	public Response createNote(NoteDto noteDto, String token) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
+		User user = userRepository.findByemail(email);
 		if (user != null) {
 			ModelMapper mapper = new ModelMapper();
-			Note note = mapper.map(notedto, Note.class);
-			note.setTitle(notedto.getTitle());
-			note.setDescription(notedto.getDescription());
+			Note note = mapper.map(noteDto, Note.class);
+			note.setTitle(noteDto.getTitle());
+			note.setDescription(noteDto.getDescription());
 			LocalDateTime now = LocalDateTime.now();
 			note.setTime(now);
-			noterepository.save(note);
+			noteRepository.save(note);
 			return new Response(200, environment.getProperty("NOTE_CREATION"), HttpStatus.OK);
 
 		}
@@ -63,8 +63,8 @@ public class NotesServiceImpl implements NotesService {
 	public Response deleteNote(String token, String id) {
 		String email = jwt.getUserToken(token);
 		if (email != null) {
-			Note noteId = noterepository.findById(id).get();
-			noterepository.delete(noteId);
+			Note noteId = noteRepository.findById(id).get();
+			noteRepository.delete(noteId);
 			return new Response(200, environment.getProperty("NOTE_DELETED"), HttpStatus.OK);
 		}
 		return new Response(400, environment.getProperty("NOTE_DELETED_FAILED"), HttpStatus.BAD_REQUEST);
@@ -75,18 +75,18 @@ public class NotesServiceImpl implements NotesService {
 	 * @return: returning the status which has taken from the environmental file
 	 */
 	@Override
-	public Response updateNote(NoteDto notedto, String token, String id) {
+	public Response updateNote(NoteDto noteDto, String token, String id) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
+		User user = userRepository.findByemail(email);
 		if (user != null) {
 			System.out.println("emailId:::" + email);
-			Note note = noterepository.findById(id).get();
+			Note note = noteRepository.findById(id).get();
 			System.out.println("note data:::" + note);
-			note.setTitle(notedto.getTitle());
-			note.setDescription(notedto.getDescription());
+			note.setTitle(noteDto.getTitle());
+			note.setDescription(noteDto.getDescription());
 			LocalDateTime update = LocalDateTime.now();
 			note.setLastUpdated(update);
-			noterepository.save(note);
+			noteRepository.save(note);
 			return new Response(200, environment.getProperty("NOTE_UPDATED"), HttpStatus.OK);
 		}
 		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
@@ -99,12 +99,12 @@ public class NotesServiceImpl implements NotesService {
 	@Override
 	public Response pin(String token, String id) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
+		User user = userRepository.findByemail(email);
 		if (user != null) {
-			Note note = noterepository.findById(id).get();
+			Note note = noteRepository.findById(id).get();
 			if (note.getId() != null) {
 				note.setPin(!note.isPin());
-				noterepository.save(note);
+				noteRepository.save(note);
 				return new Response(200, environment.getProperty("VALUE"), note.isPin());
 			}
 			return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
@@ -119,12 +119,12 @@ public class NotesServiceImpl implements NotesService {
 	@Override
 	public Response archive(String token, String id) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
+		User user = userRepository.findByemail(email);
 		if (user != null) {
-			Note note = noterepository.findById(id).get();
+			Note note = noteRepository.findById(id).get();
 			if (note.getId() != null) {
 				note.setArchive(!note.isArchive());
-				noterepository.save(note);
+				noteRepository.save(note);
 				return new Response(200, environment.getProperty("VALUE"), note.isArchive());
 			}
 			return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
@@ -141,12 +141,12 @@ public class NotesServiceImpl implements NotesService {
 	@Override
 	public Response trash(String token, String id) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
+		User user = userRepository.findByemail(email);
 		if (user != null) {
-			Note note = noterepository.findById(id).get();
+			Note note = noteRepository.findById(id).get();
 			if (note.getId() != null) {
 				note.setTrash(!note.isTrash());
-				noterepository.save(note);
+				noteRepository.save(note);
 				return new Response(200, environment.getProperty("VALUE"), note.isTrash());
 			}
 			return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
@@ -162,11 +162,11 @@ public class NotesServiceImpl implements NotesService {
 	@Override
 	public Response collaborator(CollaboratorDto collabdto, String id, String token) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
+		User user = userRepository.findByemail(email);
 		if (user != null) {
-			Note note = noterepository.findById(id).get();
+			Note note = noteRepository.findById(id).get();
 			note.getCollabEmailId().add(collabdto);
-			noterepository.save(note);
+			noteRepository.save(note);
 			return new Response(200, environment.getProperty("COLLABORATOR"), HttpStatus.OK);
 		}
 		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
@@ -180,7 +180,7 @@ public class NotesServiceImpl implements NotesService {
 	 */
 	@Override
 	public List<?> sortByName() {
-		return noterepository.findAll().stream().sorted((u1, u2) -> u1.getTitle().compareToIgnoreCase(u2.getTitle()))
+		return noteRepository.findAll().stream().sorted((u1, u2) -> u1.getTitle().compareToIgnoreCase(u2.getTitle()))
 				.parallel().collect(Collectors.toList());
 	}
 
@@ -192,19 +192,19 @@ public class NotesServiceImpl implements NotesService {
 	 */
 	@Override
 	public List<?> ascendingSortByDate() {
-		return noterepository.findAll().stream().sorted((u1, u2) -> u1.getTime().compareTo(u2.getTime())).parallel()
+		return noteRepository.findAll().stream().sorted((u1, u2) -> u1.getTime().compareTo(u2.getTime())).parallel()
 				.collect(Collectors.toList());
 	}
 
 	/**
 	 * @purpose: getting the time and date in descending order
-	 * @return: returning what ever it got from the noterepository ,first of all
+	 * @return: returning what ever it got from the note repository ,first of all
 	 *          filter it, then sort it by descending date order using parallel
 	 *          sorting features
 	 */
 	@Override
 	public List<?> descendingSortByDate() {
-		return noterepository.findAll().stream().sorted((u1, u2) -> u2.getTime().compareTo(u1.getTime())).parallel()
+		return noteRepository.findAll().stream().sorted((u1, u2) -> u2.getTime().compareTo(u1.getTime())).parallel()
 				.collect(Collectors.toList());
 
 	}
@@ -213,16 +213,16 @@ public class NotesServiceImpl implements NotesService {
 	public Response addReminder(String noteId, String token, int month, int year, int date, int hour, int minute,
 			int second) {
 		String email = jwt.getUserToken(token);
-		User user = userrepository.findByemail(email);
+		User user = userRepository.findByemail(email);
 		if (user != null) {
-			Note note = noterepository.findAllById(noteId);
+			Note note = noteRepository.findAllById(noteId);
 			ZoneId indiaZoneId = ZoneId.of("Asia/Kolkata");
 			LocalDateTime ldt = LocalDateTime.now(indiaZoneId);
-			System.out.println("date::::" + ldt);
+			// System.out.println("date::::" + ldt);
 			LocalDateTime specificDateTime = ldt.withMonth(month).withYear(year).withDayOfMonth(date).withHour(hour)
 					.withMinute(minute).withSecond(second);
 			note.setAddReminder(specificDateTime);
-			noterepository.save(note);
+			noteRepository.save(note);
 			return new Response(200, environment.getProperty("REMINDER_ADDED"), HttpStatus.OK);
 		}
 		return new Response(400, environment.getProperty("REMINDER_REMOVED"), HttpStatus.BAD_REQUEST);
@@ -230,12 +230,34 @@ public class NotesServiceImpl implements NotesService {
 
 	@Override
 	public Response deleteReminder(String noteId) {
-		Note note = noterepository.findById(noteId).get();
-		if (note.getAddReminder() != null) {
+		Note note = noteRepository.findById(noteId).get();
+		if (note.getAddReminder() == null) {
+			return new Response(400, environment.getProperty("REMINDER_NOT_AVAILABLE"), HttpStatus.BAD_REQUEST);
+
+		} else {
 			note.setAddReminder(null);
+			noteRepository.save(note);
 			return new Response(200, environment.getProperty("REMINDER_REMOVED"), HttpStatus.OK);
 		}
-		return new Response(400, environment.getProperty("REMINDER_NOT_AVAILABLE"), HttpStatus.BAD_REQUEST);
+
+	}
+
+	@Override
+	public Response editReminder(String noteId,String token, int month, int year, int date, int hour, int minute,
+			int second) {
+		Note note = noteRepository.findById(noteId).get();
+		if (note.getAddReminder() == null) {
+			return new Response(400, environment.getProperty("MESSAGE"), HttpStatus.BAD_REQUEST);
+		} 
+		else {
+			note.setAddReminder(null);
+			LocalDateTime ldt = LocalDateTime.now();
+			LocalDateTime editedReminderDateTime = ldt.withMonth(month).withYear(year).withDayOfMonth(date).withHour(hour)
+					.withMinute(minute).withSecond(second);
+			note.setAddReminder(editedReminderDateTime);
+			noteRepository.save(note);
+		}
+		return new Response(200, environment.getProperty("EDIT_REMINDER"), HttpStatus.OK);
 
 	}
 

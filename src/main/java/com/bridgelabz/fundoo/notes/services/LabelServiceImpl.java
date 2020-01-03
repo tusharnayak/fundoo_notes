@@ -31,6 +31,10 @@ public class LabelServiceImpl implements LabelService {
 	@Autowired
 	private Environment environment;
 
+	/**
+	 * @purpose: creating the label
+	 * @return: it returns the response that label is created or not
+	 */
 	@Override
 	public Response createLabel(LabelDto labeldto, String token) {
 		String email = jwt.getUserToken(token);
@@ -48,6 +52,11 @@ public class LabelServiceImpl implements LabelService {
 		}
 	}
 
+	/**
+	 * @purpose: to delete the label that user created
+	 * @return: return the response of label deleted or not
+	 *
+	 */
 	@Override
 	public Response deleteLabel(String token, String labelid) {
 		String email = jwt.getUserToken(token);
@@ -61,6 +70,11 @@ public class LabelServiceImpl implements LabelService {
 		}
 	}
 
+	/**
+	 * @purpose: to update the label title
+	 * @return: returns the label is update or not
+	 *
+	 */
 	@Override
 	public Response updateLabel(LabelDto labeldto, String token, String labelid) {
 		String email = jwt.getUserToken(token);
@@ -77,6 +91,10 @@ public class LabelServiceImpl implements LabelService {
 		}
 	}
 
+	/**
+	 * @purpose: add the label list in note and note list in label
+	 * @return: property that the label and note list are added or not
+	 */
 	@Override
 	public Response labelNoteAdd(String noteid, String labelid, String token) {
 		String email = jwt.getUserToken(token);

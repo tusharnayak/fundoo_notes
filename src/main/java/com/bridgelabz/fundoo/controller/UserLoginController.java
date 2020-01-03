@@ -29,52 +29,41 @@ public class UserLoginController {
 	public ResponseEntity<Response> addUser(@Valid @RequestBody RegistrationDto registrationDto) {
 //		String result = serviceimpl.addUser(registrationdto);
 //		System.out.println("result:::" + result);
-		return new ResponseEntity<Response>(serviceImpl.addUser(registrationDto),HttpStatus.OK);
+		return new ResponseEntity<Response>(serviceImpl.addUser(registrationDto), HttpStatus.OK);
 	}
-	
-	
 
 	@PostMapping("/login")
-	public ResponseEntity<Response> loginUser(@Valid @RequestBody LoginDto loginDto,@RequestParam String token) {
+	public ResponseEntity<Response> loginUser(@Valid @RequestBody LoginDto loginDto, @RequestParam String token) {
 //		String result = serviceimpl.loginUser(logindto,token);
 //		System.out.println("login successful"+result);
-		return new ResponseEntity<Response>(serviceImpl.loginUser(loginDto,token),HttpStatus.OK);
+		return new ResponseEntity<Response>(serviceImpl.loginUser(loginDto, token), HttpStatus.OK);
 	}
-	
-	
+
 	@PostMapping("/forgetPassword")
 	public ResponseEntity<Response> forgetPassword(@Valid @RequestBody ForgetPasswordDto forgetpassword) {
-	return new ResponseEntity<Response>(serviceImpl.forgetPassword(forgetpassword), HttpStatus.OK);
+		return new ResponseEntity<Response>(serviceImpl.forgetPassword(forgetpassword), HttpStatus.OK);
 	}
-	
-	
+
 	@PostMapping("/resetPassword")
-	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetpassword,String token){
-		return new ResponseEntity<Response>(serviceImpl.resetPassword(resetpassword,token), HttpStatus.OK);
+	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetpassword, String token) {
+		return new ResponseEntity<Response>(serviceImpl.resetPassword(resetpassword, token), HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/upload_profilepic")
-	public ResponseEntity<Response>uploadProfilePic( @RequestParam String token,@RequestParam("file") MultipartFile file) throws IOException{
-		return new ResponseEntity<Response>(serviceImpl.profilePic(token, file),HttpStatus.OK);
+	public ResponseEntity<Response> uploadProfilePic(@RequestParam String token,
+			@RequestParam("file") MultipartFile file) throws IOException {
+		return new ResponseEntity<Response>(serviceImpl.profilePic(token, file), HttpStatus.OK);
 	}
+
 	@PostMapping("/delete_profilepic")
-	public ResponseEntity<Response>deleteProfilePic(@RequestParam String token){
-		return new ResponseEntity<Response>(serviceImpl.deletePic(token),HttpStatus.OK);
+	public ResponseEntity<Response> deleteProfilePic(@RequestParam String token) {
+		return new ResponseEntity<Response>(serviceImpl.deletePic(token), HttpStatus.OK);
 	}
+
 	@PostMapping("/edit_profilepic")
-	public ResponseEntity<Response>editProfilePic(@RequestParam String token,@RequestParam("file")MultipartFile file) throws IOException{
-		return new ResponseEntity<Response>(serviceImpl.editPic(token, file),HttpStatus.OK);
+	public ResponseEntity<Response> editProfilePic(@RequestParam String token, @RequestParam("file") MultipartFile file)
+			throws IOException {
+		return new ResponseEntity<Response>(serviceImpl.editPic(token, file), HttpStatus.OK);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 }

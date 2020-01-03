@@ -1,6 +1,7 @@
 package com.bridgelabz.fundoo.services;
 
 import java.io.File;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -17,6 +18,7 @@ import com.bridgelabz.fundoo.dto.ForgetPasswordDto;
 import com.bridgelabz.fundoo.dto.LoginDto;
 import com.bridgelabz.fundoo.dto.RegistrationDto;
 import com.bridgelabz.fundoo.dto.ResetPasswordDto;
+import com.bridgelabz.fundoo.exception.custom.TokenException;
 import com.bridgelabz.fundoo.model.User;
 import com.bridgelabz.fundoo.repository.UserRepository;
 import com.bridgelabz.fundoo.response.Response;
@@ -51,15 +53,19 @@ public class UserServiceImpl implements UserService {
 		ModelMapper mapper = new ModelMapper();
 		User user = mapper.map(registrationdto, User.class);
 		String token = jwt.createToken("tusharnayak1996@gmail.com");
+		if (token.isEmpty()) {
+			throw new TokenException("invalid token");
+		}
+
 		jms.sendMail("tusharnayak1996@gmail.com", token);
 		String regdPass = registrationdto.getPassword();
 		String confirmPass = registrationdto.getConfirmPassword();
 		if (regdPass.equals(confirmPass)) {
 			user.setPassword(bcryptpasswordencoder.encode(regdPass));
 			repository.save(user);
-			return new Response(200, "user added successfully", true);
+			return new Response(200, "USER_ADDED", HttpStatus.OK);
 		}
-		return new Response(400, "check your password field", false);
+		return new Response(400, "INCORRECT_PASSWORD", HttpStatus.BAD_REQUEST);
 
 	}
 
@@ -79,13 +85,18 @@ public class UserServiceImpl implements UserService {
 				if (isValid) {
 					bcryptpasswordencoder.encode(logindto.getPassword());
 					repository.save(user);
-					return new Response(200, "login successfully", true);
+					return new Response(200, "LOGIN", HttpStatus.OK);
 				}
 			}
 		}
-		return new Response(400, "invalid credential", false);
+		return new Response(400, "iINVALID_CREDENTIAL", HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * @purpose: if the password is forget, then how to send a confirmation to the
+	 *           mail
+	 * @return: the token is send to the mail id or not
+	 */
 	@Override
 	public Response forgetPassword(ForgetPasswordDto forgetpassword) {
 		User email = repository.findByemail(forgetpassword.getEmail());
@@ -95,12 +106,16 @@ public class UserServiceImpl implements UserService {
 		if (email != null) {
 			System.out.println("in email");
 			jms.sendMail(forgetpassword.getEmail(), token);
-			return new Response(200, "token sent to your mail ", true);
+			return new Response(200, "SENDING_TOKEN", HttpStatus.OK);
 		}
-		return new Response(400, "incorrect mail id", false);
+		return new Response(400, "INVALID_MAIL_ID", HttpStatus.BAD_REQUEST);
 
 	}
 
+	/**
+	 * @purpose: to reset the password
+	 * @return: the password is reset or not.
+	 */
 	@Override
 	public Response resetPassword(ResetPasswordDto resetPassworddto, String token) {
 		String resetPassToken = jwt.getUserToken(token);
@@ -114,12 +129,18 @@ public class UserServiceImpl implements UserService {
 				user.setPassword(bcryptpasswordencoder.encode(resetPassworddto.getNewPassword()));
 				user.setConfirmPassword(resetPassworddto.getConfirmPassword());
 				repository.save(user);
-				return new Response(200, "password reset successfully", true);
+				return new Response(200, "RESET_PASSWORD", HttpStatus.OK);
 			}
 		}
-		return new Response(400, "password is not matched", false);
+		return new Response(400, "PASSWORD_NOT_MATCHED", HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * @purpose: to add the profile picture in the list
+	 * @return: it returns the confirmation that picture is uploaded or the
+	 *          extension is valid or the mail id is valid or not
+	 *
+	 */
 	@Override
 	public Response profilePic(String token, MultipartFile file) throws IOException {
 		String email = jwt.getUserToken(token);
@@ -142,6 +163,10 @@ public class UserServiceImpl implements UserService {
 		return new Response(400, environment.getProperty("INVALID_MAIL_ID"), HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * @purpose: to delete the valid profile picture
+	 * @return: the profile picture is deleted or not
+	 */
 	@Override
 	public Response deletePic(String token) {
 		String email = jwt.getUserToken(token);
@@ -154,6 +179,11 @@ public class UserServiceImpl implements UserService {
 		return new Response(400, environment.getProperty("INVALID_CREDENTIAL"), HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * @purpose: to edit the profile picture
+	 * @return: the confirmation of profile picture is uploaded or the extension is
+	 *          valid or not and the previous profile pic is available or not
+	 */
 	@Override
 	public Response editPic(String token, MultipartFile file) throws IOException {
 		String email = jwt.getUserToken(token);

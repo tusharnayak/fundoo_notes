@@ -209,6 +209,10 @@ public class NotesServiceImpl implements NotesService {
 
 	}
 
+	/**
+	 * @purpose: to add the reminder according to the user requirement
+	 * @return: returning the reminder is added or not
+	 */
 	@Override
 	public Response addReminder(String noteId, String token, int month, int year, int date, int hour, int minute,
 			int second) {
@@ -218,7 +222,6 @@ public class NotesServiceImpl implements NotesService {
 			Note note = noteRepository.findAllById(noteId);
 			ZoneId indiaZoneId = ZoneId.of("Asia/Kolkata");
 			LocalDateTime ldt = LocalDateTime.now(indiaZoneId);
-			// System.out.println("date::::" + ldt);
 			LocalDateTime specificDateTime = ldt.withMonth(month).withYear(year).withDayOfMonth(date).withHour(hour)
 					.withMinute(minute).withSecond(second);
 			note.setAddReminder(specificDateTime);
@@ -228,6 +231,10 @@ public class NotesServiceImpl implements NotesService {
 		return new Response(400, environment.getProperty("REMINDER_REMOVED"), HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * @purpose: to delete the reminder
+	 * @return: return the confirmation of reminder is deleted or not
+	 */
 	@Override
 	public Response deleteReminder(String noteId) {
 		Note note = noteRepository.findById(noteId).get();
@@ -239,26 +246,26 @@ public class NotesServiceImpl implements NotesService {
 			noteRepository.save(note);
 			return new Response(200, environment.getProperty("REMINDER_REMOVED"), HttpStatus.OK);
 		}
+}
 
-	}
-
+	/**
+	 * @purpose: to edit the reminder according to the user
+	 * @return: returning the confirmation that the reminder is edited or not
+	 */
 	@Override
-	public Response editReminder(String noteId,String token, int month, int year, int date, int hour, int minute,
+	public Response editReminder(String noteId, String token, int month, int year, int date, int hour, int minute,
 			int second) {
 		Note note = noteRepository.findById(noteId).get();
 		if (note.getAddReminder() == null) {
 			return new Response(400, environment.getProperty("MESSAGE"), HttpStatus.BAD_REQUEST);
-		} 
-		else {
+		} else {
 			note.setAddReminder(null);
 			LocalDateTime ldt = LocalDateTime.now();
-			LocalDateTime editedReminderDateTime = ldt.withMonth(month).withYear(year).withDayOfMonth(date).withHour(hour)
-					.withMinute(minute).withSecond(second);
+			LocalDateTime editedReminderDateTime = ldt.withMonth(month).withYear(year).withDayOfMonth(date)
+					.withHour(hour).withMinute(minute).withSecond(second);
 			note.setAddReminder(editedReminderDateTime);
 			noteRepository.save(note);
 		}
 		return new Response(200, environment.getProperty("EDIT_REMINDER"), HttpStatus.OK);
-
 	}
-
 }
